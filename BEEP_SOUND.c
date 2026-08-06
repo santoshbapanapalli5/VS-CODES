@@ -9,7 +9,7 @@ int main() {
     Sleep(1000); // Sleep() in windows.h takes milliseconds (1000ms = 1s)
 
     // Plays a 1000Hz beep for 300 milliseconds
-    Beep(1000, 15000); 
+    Beep(1000, 4000); 
 
     printf("SUCCESS!\n");
 

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Santosh | Web Developer</title>
+    
+    <!-- CSS GOES HERE -->
+    <style>
+        body {
+            background-color: #0f172a; /* Dark blue background */
+            color: #ffffff;            /* White text */
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;   /* Center horizontally */
+            align-items: center;       /* Center vertically */
+            height: 100vh;             /* Full screen height */
+            margin: 0;
+        }
+
+        .card {
+            background-color: #1e293b;
+            padding: 30px;
+            border-radius: 12px;       /* Rounded corners */
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            text-align: center;
+            width: 300px;
+        }
+
+        h1 {
+            color: #38bdf8; /* Light blue accent */
+            margin-bottom: 5px;
+        }
+
+        p {
+            color: #94a3b8;
+        }
+
+        button {
+            background-color: #38bdf8;
+            color: #0f172a;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+
+        button:hover {
+            background-color: #7dd3fc; /* Lighter blue on mouse hover */
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HTML GOES HERE -->
+    <div class="card">
+        <h1>Santosh</h1>
+        <p>Future Full-Stack Web Developer 🚀</p>
+        <button onclick="sayHello()">Connect</button>
+    </div>
+
+    <!-- JAVASCRIPT GOES HERE -->
+    <script>
+        function sayHello() {
+            alert("Thanks for connecting with Santosh!");
+        }
+    </script>
+
+</body>
+</html>
