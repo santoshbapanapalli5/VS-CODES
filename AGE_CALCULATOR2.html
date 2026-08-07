@@ -1,0 +1,107 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Age calculator</title>
+    <style>
+      h1 {
+        color: blue;
+        text-align: center;
+      }
+      .result {
+        color: white;
+        background-color: green;
+        width: 100%;
+        text-align: center;
+        height: 30px;
+        font-size: 20px;
+      }
+      .recheck {
+        color: white;
+        background-color: rgb(15, 189, 15);
+        height: 30px;
+        width: 100px;
+        font-size: 20px;
+        border: none;
+        border-radius: 10px;
+        margin: 0 auto;
+        display: block;
+      }
+      .recheck:hover {
+        background-color: rgb(62, 217, 62);
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Age calculator</h1>
+    <button class="result">result</button>
+
+    <p class="years">years:</p>
+    <p class="months">months:</p>
+    <p class="days">days:</p>
+    <p class="weeks">weeks:</p>
+    <p class="hours">hours:</p>
+    <p class="seconds">seconds:</p>
+
+    <!-- RECHECK BUTTON GOES BACK TO PAGE 1 -->
+    <button
+      class="recheck"
+      onclick="window.location.href = 'AGE_CALCULATOR1.html'"
+    >
+      recheck
+    </button>
+
+    <!-- CALCULATION LOGIC -->
+    <script>
+      const params = new URLSearchParams(window.location.search);
+      const date1Str = params.get("firstDate");
+      const date2Str = params.get("secondDate");
+
+      if (date1Str && date2Str) {
+        const d1 = new Date(date1Str);
+        const d2 = new Date(date2Str);
+
+        const start = d1 < d2 ? d1 : d2;
+        const end = d1 < d2 ? d2 : d1;
+
+        // Exact year calculation
+        let years = end.getFullYear() - start.getFullYear();
+        let monthDiff = end.getMonth() - start.getMonth();
+        let dayDiff = end.getDate() - start.getDate();
+
+        if (dayDiff < 0) {
+          monthDiff--;
+        }
+        if (monthDiff < 0) {
+          years--;
+        }
+
+        // Total metric calculations
+        const diffMs = Math.abs(d2 - d1);
+        const totalSeconds = Math.floor(diffMs / 1000);
+        const totalMinutes = Math.floor(totalSeconds / 60);
+        const totalHours = Math.floor(totalMinutes / 60);
+        const totalDays = Math.floor(totalHours / 24);
+        const totalWeeks = Math.floor(totalDays / 7);
+        const totalMonths =
+          (end.getFullYear() - start.getFullYear()) * 12 +
+          (end.getMonth() - start.getMonth());
+
+        // Display correct values
+        document.querySelector(".years").innerText = "years: " + years;
+        document.querySelector(".months").innerText =
+          "months: " + totalMonths.toLocaleString();
+        document.querySelector(".days").innerText =
+          "days: " + totalDays.toLocaleString();
+        document.querySelector(".weeks").innerText =
+          "weeks: " + totalWeeks.toLocaleString();
+        document.querySelector(".hours").innerText =
+          "hours: " + totalHours.toLocaleString();
+        document.querySelector(".seconds").innerText =
+          "seconds: " + totalSeconds.toLocaleString();
+      } else {
+        document.querySelector(".result").innerText =
+          "Please select dates on Page 1 first!";
+      }
+    </script>
+  </body>
+</html>
