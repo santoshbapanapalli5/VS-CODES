@@ -1,5 +1,7 @@
 #include <stdio.h>
+#include <stdlib.h>
 int main(){
+    system("cls");
     int a,b,c,d;
     printf("give first num: ");
     scanf("%d", &a);
