@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PDPM IIITDM Jabalpur</title>
+    <style>
+      /* Global Styles */
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f3f4f6;
+      }
+
+      /* Top Blue Banner Button */
+      .college {
+        color: white;
+        background-color: #1d4ed8;
+        border: none;
+        width: 100%;
+        font-size: 18px;
+        font-weight: bold;
+        height: 45px;
+        cursor: pointer;
+      }
+
+      /* Virtual Campus Tour Link */
+      .VirtualCampusTour {
+        display: block;
+        text-align: center;
+        color: #059669;
+        text-decoration: none;
+        font-size: 16px;
+        font-weight: bold;
+        margin: 15px 0 25px 0;
+      }
+
+      .VirtualCampusTour:hover {
+        text-decoration: underline;
+      }
+
+      /* 2-Column Grid Container */
+      .card-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr; /* 2 equal columns side-by-side */
+        gap: 20px; /* Space between cards */
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 0 20px 40px 20px;
+      }
+
+      /* Common Card Styling for All Blocks */
+      .card-grid > div {
+        background-color: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease;
+      }
+
+      .card-grid > div:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 12px rgba(0, 0, 0, 0.08);
+      }
+
+      /* Card Headings / Links */
+      .card-grid a {
+        display: block;
+        text-align: center;
+        color: rgb(221, 17, 109);
+        font-size: 18px;
+        font-weight: bold;
+        text-decoration: none;
+        margin-bottom: 12px;
+      }
+
+      .card-grid a:hover {
+        text-decoration: underline;
+      }
+
+      /* Card Paragraphs */
+      .card-grid p {
+        color: #374151;
+        font-size: 14px;
+        line-height: 1.6;
+        text-align: justify;
+        margin: 0;
+      }
+
+      /* Responsive Design: Stack into 1 column on smaller mobile screens */
+      @media (max-width: 768px) {
+        .card-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header Banner -->
+    <button class="college">
+      Indian Institute of Information Technology, Design and Manufacturing,
+      Jabalpur
+    </button>
+
+    <!-- Virtual Tour Link -->
+    <a href="https://360-tour.iiitdmj.ac.in/" class="VirtualCampusTour"
+      >360° Virtual Campus Tour</a
+    >
+
+    <!-- Grid Wrapper for 2-Column Layout -->
+    <div class="card-grid">
+      <!-- Block 1 -->
+      <div class="StudentCampusLifeBlock">
+        <a
+          href="https://www.iiitdmj.ac.in/students/activities.php"
+          class="StudentCampusLife"
+          >Student Campus Life</a
+        >
+        <p class="StudentCampusLifePara">
+          IIITDMJ emphasizes on several extra-curricular activities in addition
+          to its rigorous academic programme. Institute is in the growing stage,
+          Football ground, Volleyball court, basketball court and tennis court
+          at the institute premises. IIITDMJ students have formed various clubs
+          under Students Gymkhana, which organises various cultural, sports and
+          activities.
+        </p>
+      </div>
+
+      <!-- Block 2 -->
+      <div class="IICBlock">
+        <a href="https://www.iiitdmj.ac.in/iic.php" class="IICLink"
+          >Institute Innovation Council</a
+        >
+        <p class="IICPara">
+          An Institute Innovation Council (IIC) has been established at IIITDM
+          Jabalpur as per the norms and directives of Ministry of Human Resource
+          Development (MHRD) Innovation Cell (MIC). Ministry of Human Resource
+          Development, Govt. of India...
+        </p>
+      </div>
+
+      <!-- Block 3 -->
+      <div class="DesignWorkshopBlock">
+        <a
+          href="https://sites.google.com/iiitdmj.ac.in/design-workshop-10-"
+          class="DesignWorkshopLink"
+          >Design Workshop</a
+        >
+        <p class="DesignWorkshopPara">
+          DeW is an interdisciplinary design workshop organized by IIITDM
+          Jabalpur in collaboration with the Ministry of Foreign Affairs, Japan
+          since 2010.
+        </p>
+      </div>
+
+      <!-- Block 4 -->
+      <div class="ElectronicandIctacademyBlock">
+        <a href="https://www.iiitdmj.ac.in/ict/" class="ElectronicandIctacademy"
+          >Electronic and ICT Academy</a
+        >
+        <p class="ElectronicandIctacademyPara">
+          Department of Electronics and Information Technology, Government of
+          India has instituted four Electronics and ICT Academies with one
+          academy at IIITDM Jabalpur with the primary objective preparing
+          manpower for two important missions - 'Digital India' and 'Make in
+          India'.
+        </p>
+      </div>
+
+      <!-- Block 5 -->
+      <div class="StartUpIndiaBlock">
+        <a href="http://startup.iiitdmj.ac.in/" class="StartUpIndia"
+          >StartUp India</a
+        >
+        <p class="StartUpIndiaPara">
+          The Government of India has announced 'StartUp India' initiative for
+          creating a conducive environment for startups in India. The various
+          Ministries of the Government of India have initiated a number of
+          activities for the purpose.
+        </p>
+      </div>
+
+      <!-- Block 6 -->
+      <div class="ResearchBlock">
+        <a href="https://rspc.iiitdmj.ac.in/" class="Research">Research</a>
+        <p class="ResearchPara">
+          IIITDM Jabalpur was established to foster the research and innovation
+          environment across technology and design domains.
+        </p>
+      </div>
+    </div>
+  </body>
+</html>
