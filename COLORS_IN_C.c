@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 // Color Definitions
-#define RED "\033[1;34m"
+#define RED "\033[1;31m"
 #define GREEN "\033[1;32m"
 #define YELLOW "\033[1;33m"
 #define BLUE "\033[1;34m"
@@ -14,6 +14,7 @@ int main() {
     printf(GREEN " [SUCCESS] File saved successfully!\n" RESET);
     printf(YELLOW " [WARNING] Battery level low.\n" RESET);
     printf(RED " [ERROR] Access Denied!\n" RESET);
+    printf(BLUE"execution completed" RESET);
 
     return 0;
 }

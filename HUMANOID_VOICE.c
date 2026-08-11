@@ -7,11 +7,8 @@ void speak(const char *message) {
 }
 int main() {
     printf("Talking...\n");
-
     speak("Hello! Welcome to IIIT Jabalpur.");
-    
     speak("Your code is working perfectly.");
-
     printf("Done!\n");
     return 0;
 }

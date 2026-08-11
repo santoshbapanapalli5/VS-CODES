@@ -2,7 +2,7 @@
 
 int main()
 {
-    long long a,b,c,d,e,f,i;
+    long long a,b,c,d,i;
     a = 0;
     b = 1;
     printf("no.of terms: ");
