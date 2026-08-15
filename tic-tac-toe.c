@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <windows.h>
 char board[3][3] = {{'1', '2', '3'}, {'4', '5', '6'}, {'7', '8', '9'}};
-
 void drawboard()
 {
     for (int i = 0; i < 3; i++)
@@ -38,7 +37,6 @@ int checkwin()
     {
         return 1;
     }
-
     int count = 0;
     for (int i = 0; i < 3; i++)
     {
@@ -55,10 +53,8 @@ int checkwin()
         return 2;
     }
 }
-
 int main()
 {
-
     int row, column, gamestatus, move;
     int player = 1;
     while (1)

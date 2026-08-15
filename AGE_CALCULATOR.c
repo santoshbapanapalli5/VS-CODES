@@ -58,19 +58,18 @@ void calculateDetailedAge(int d1, int m1, int y1, int d2, int m2, int y2) {
     printf("\n================ AGE OUTPUT ================\n");
     printf("Age:          %d years %d months %d days\n", years, months, days);
     printf("--------------------------------------------\n");
-    printf("Total Months: %lld months (and %d days)\n", total_months, days);
-    printf("Total Weeks:  %lld weeks (and %d days)\n", total_weeks, remaining_days);
-    printf("Total Days:   %lld days\n", total_days);
-    printf("Total Hours:  %lld hours\n", total_hours);
-    printf("Total Mins:   %lld minutes\n", total_minutes);
-    printf("Total Secs:   %lld seconds\n", total_seconds);
+    printf("Total Months : %lld months (and %d days)\n", total_months, days);
+    printf("Total Weeks  : %lld weeks (and %d days)\n", total_weeks, remaining_days);
+    printf("Total Days   : %lld days\n", total_days);
+    printf("Total Hours  : %lld hours\n", total_hours);
+    printf("Total Mins   : %lld minutes\n", total_minutes);
+    printf("Total Secs   : %lld seconds\n", total_seconds);
     printf("============================================\n");
 }
 
 int main() {
     int d1, m1, y1;
     int d2, m2, y2;
-
     printf("Enter start/birth date (DD MM YYYY): ");
     scanf("%d %d %d", &d1, &m1, &y1);
 
