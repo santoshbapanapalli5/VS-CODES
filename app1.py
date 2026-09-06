@@ -273,4 +273,4 @@ if st.button("⚡ Generate Practical Day-Wise Schedule"):
         ax.set_ylabel("Hours", fontsize=10, fontweight='bold', color='#333333')
         ax.legend(loc="upper right", frameon=True, facecolor='#ffffff', edgecolor='none')
         plt.tight_layout()
-        st.pyplot(fig)
+        st.pyplot(fig)  
