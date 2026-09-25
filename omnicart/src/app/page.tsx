@@ -15,7 +15,9 @@ import {
   onSnapshot, 
   doc, 
   updateDoc, 
-  arrayUnion 
+  arrayUnion,
+  query,
+  where 
 } from "firebase/firestore";
 import { auth, googleProvider, db } from "@/lib/firebase";
 
@@ -118,8 +120,8 @@ export default function OmniCartPlatform() {
 
   // Checkout Location Fields
   const [checkoutAddress, setCheckoutAddress] = useState("");
-  const [checkoutCity, setCheckoutCity] = useState("");
-  const [checkoutPincode, setCheckoutPincode] = useState("");
+  const [checkoutCity, setCheckoutCity] = useState("Jabalpur");
+  const [checkoutPincode, setCheckoutPincode] = useState("482005");
 
   // Firebase Auth Listener
   useEffect(() => {
@@ -127,7 +129,7 @@ export default function OmniCartPlatform() {
       if (firebaseUser) {
         const appUser: User = {
           id: firebaseUser.uid,
-          name: firebaseUser.displayName || firebaseUser.email?.split("@")[0] || "User",
+          name: firebaseUser.displayName || firebaseUser.email?.split("@")[0] || "Student",
           email: firebaseUser.email || "",
           role: selectedRole,
         };
@@ -141,7 +143,7 @@ export default function OmniCartPlatform() {
     return () => unsubscribe();
   }, [selectedRole]);
 
-  // Real-time Cloud Database Listener: Fetch Products
+  // Real-time Database Listener: Fetch Catalog Products
   useEffect(() => {
     const unsubscribe = onSnapshot(collection(db, "products"), (snapshot) => {
       const cloudProducts = snapshot.docs.map((doc) => ({
@@ -153,21 +155,31 @@ export default function OmniCartPlatform() {
     return () => unsubscribe();
   }, []);
 
-  // Real-time Cloud Database Listener: Fetch Orders
+  // Real-time Database Listener: Fetch ONLY relevant orders for logged-in user
   useEffect(() => {
-    const unsubscribe = onSnapshot(collection(db, "orders"), (snapshot) => {
+    if (!currentUser) {
+      setOrders([]);
+      return;
+    }
+
+    // Filter orders so customers only see their purchases and sellers only see their sales
+    const fieldToFilter = currentUser.role === "seller" ? "sellerId" : "customerId";
+    const q = query(collection(db, "orders"), where(fieldToFilter, "==", currentUser.id));
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
       const cloudOrders = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       })) as Order[];
       setOrders(cloudOrders);
     });
+
     return () => unsubscribe();
-  }, []);
+  }, [currentUser]);
 
   const sellerProducts = currentUser ? products.filter((p) => p.sellerId === currentUser.id) : [];
-  const sellerOrders = currentUser ? orders.filter((o) => o.sellerId === currentUser.id) : [];
-  const customerOrders = currentUser ? orders.filter((o) => o.customerId === currentUser.id) : [];
+  const sellerOrders = orders; // Already filtered by query
+  const customerOrders = orders; // Already filtered by query
 
   const filteredProducts = selectedCategory === "All" 
     ? products 
@@ -213,7 +225,7 @@ export default function OmniCartPlatform() {
     setActiveTab("store");
   };
 
-  // WRITE DATA TO GOOGLE FIREBASE CLOUD
+  // WRITE DATA TO FIREBASE CLOUD
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const reader = new FileReader();
@@ -246,7 +258,6 @@ export default function OmniCartPlatform() {
       reviews: [],
     };
 
-    // Save directly to Google Cloud Database
     await addDoc(collection(db, "products"), newProductData);
 
     setNewTitle("");
@@ -254,7 +265,7 @@ export default function OmniCartPlatform() {
     setNewStock("");
     setNewDescription("");
     setImagePreview(null);
-    alert("Product saved to Cloud Catalog!");
+    alert("Product saved to Campus Catalog!");
     setSellerSubTab("inventory");
   };
 
@@ -298,12 +309,11 @@ export default function OmniCartPlatform() {
         estimatedDeliveryDate: `Delivery in ${cartItem.deliveryDays || 3} Days`,
       };
 
-      // Save order to Google Cloud Database
       await addDoc(collection(db, "orders"), newOrderData);
     }
 
     setCart([]);
-    alert("Order placed successfully on Cloud! Check 'My Orders'.");
+    alert("Order placed successfully! Check 'My Orders'.");
     setActiveTab("my-orders");
   };
 
@@ -320,7 +330,7 @@ export default function OmniCartPlatform() {
 
     const newRev: Review = {
       id: "REV-" + Date.now(),
-      customerName: currentUser?.name || "Verified Customer",
+      customerName: currentUser?.name || "Verified Student",
       rating: reviewRating,
       comment: reviewComment,
       date: new Date().toLocaleDateString(),
@@ -332,13 +342,13 @@ export default function OmniCartPlatform() {
     });
 
     setReviewComment("");
-    alert("Verified purchase review posted to Cloud Database!");
+    alert("Verified purchase review posted!");
   };
 
   if (loading) {
     return (
       <div className="min-h-screen bg-slate-900 text-white flex items-center justify-center font-sans">
-        <p className="text-sm font-bold">Loading OmniCart Cloud...</p>
+        <p className="text-sm font-bold">Loading IIITJ Campus Marketplace...</p>
       </div>
     );
   }
@@ -355,7 +365,7 @@ export default function OmniCartPlatform() {
               }}
               className="text-2xl font-black text-indigo-400 cursor-pointer tracking-tight"
             >
-              🛒 OmniCart
+              🛒 OmniCart Campus
             </span>
             <div className="hidden md:flex items-center gap-2 bg-slate-800 p-1 rounded-xl text-xs font-semibold">
               <button
@@ -432,9 +442,9 @@ export default function OmniCartPlatform() {
           <div className="max-w-md mx-auto bg-white p-8 rounded-3xl border border-slate-200 shadow-md space-y-6">
             <div className="text-center space-y-1">
               <h1 className="text-2xl font-black text-slate-900">
-                {authMode === "login" ? "Welcome Back" : "Create Account"}
+                {authMode === "login" ? "Welcome Back" : "Campus Registration"}
               </h1>
-              <p className="text-xs text-slate-500">Sign in to sync your orders across devices</p>
+              <p className="text-xs text-slate-500">Sign in to buy or sell products on campus</p>
             </div>
 
             <button
@@ -452,8 +462,8 @@ export default function OmniCartPlatform() {
                   onChange={(e) => setSelectedRole(e.target.value as "customer" | "seller")}
                   className="w-full p-2.5 rounded-xl border border-slate-300 bg-white font-bold text-indigo-700"
                 >
-                  <option value="customer">🛍️ Customer Account</option>
-                  <option value="seller">💼 Seller Account</option>
+                  <option value="customer">🛍️ Student Buyer</option>
+                  <option value="seller">💼 Student Seller</option>
                 </select>
               </div>
 
@@ -461,7 +471,7 @@ export default function OmniCartPlatform() {
                 <label className="block text-slate-700 mb-1">Email Address</label>
                 <input
                   type="email"
-                  placeholder="alex@example.com"
+                  placeholder="student@iiitdmj.ac.in"
                   value={authEmail}
                   onChange={(e) => setAuthEmail(e.target.value)}
                   required
@@ -548,7 +558,7 @@ export default function OmniCartPlatform() {
                     </div>
 
                     <div className="space-y-1">
-                      <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">Description & Specs</h3>
+                      <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">Description & Details</h3>
                       <p className="text-xs text-slate-700 bg-slate-50 p-4 rounded-xl border leading-relaxed">
                         {selectedProduct.description}
                       </p>
@@ -570,7 +580,7 @@ export default function OmniCartPlatform() {
                       {selectedProduct.reviews.map((rev) => (
                         <div key={rev.id} className="bg-slate-50 p-4 rounded-xl border text-xs space-y-1">
                           <div className="flex justify-between items-center font-bold">
-                            <span>{rev.customerName} <span className="text-emerald-600 font-normal">✔ Verified Purchase</span></span>
+                            <span>{rev.customerName} <span className="text-emerald-600 font-normal">✔ Verified Student Purchase</span></span>
                             <span className="text-amber-500">{"★".repeat(rev.rating)}{"☆".repeat(5 - rev.rating)}</span>
                           </div>
                           <p className="text-slate-600">{rev.comment}</p>
@@ -669,12 +679,12 @@ export default function OmniCartPlatform() {
                 ))}
 
                 <form onSubmit={handleCheckout} className="space-y-3 pt-4 border-t text-xs">
-                  <h3 className="font-bold text-sm text-slate-900">📍 Enter Delivery Address</h3>
+                  <h3 className="font-bold text-sm text-slate-900">📍 Delivery Details (Hostel / Room)</h3>
                   <div>
-                    <label className="block text-slate-600 mb-1">Street Address</label>
+                    <label className="block text-slate-600 mb-1">Hostel & Room No.</label>
                     <input
                       type="text"
-                      placeholder="e.g. House No. 42, Civil Lines"
+                      placeholder="e.g. Hall 4, Room 201"
                       value={checkoutAddress}
                       onChange={(e) => setCheckoutAddress(e.target.value)}
                       required
@@ -686,22 +696,20 @@ export default function OmniCartPlatform() {
                       <label className="block text-slate-600 mb-1">City</label>
                       <input
                         type="text"
-                        placeholder="e.g. Jabalpur"
                         value={checkoutCity}
                         onChange={(e) => setCheckoutCity(e.target.value)}
                         required
-                        className="w-full p-2.5 rounded-xl border"
+                        className="w-full p-2.5 rounded-xl border bg-slate-50"
                       />
                     </div>
                     <div>
                       <label className="block text-slate-600 mb-1">Pincode</label>
                       <input
                         type="text"
-                        placeholder="e.g. 482001"
                         value={checkoutPincode}
                         onChange={(e) => setCheckoutPincode(e.target.value)}
                         required
-                        className="w-full p-2.5 rounded-xl border"
+                        className="w-full p-2.5 rounded-xl border bg-slate-50"
                       />
                     </div>
                   </div>
@@ -718,7 +726,7 @@ export default function OmniCartPlatform() {
           <div className="space-y-6 max-w-3xl mx-auto">
             <h1 className="text-2xl font-bold">My Orders</h1>
             {customerOrders.length === 0 ? (
-              <p className="text-xs text-slate-500">No placed orders found.</p>
+              <p className="text-xs text-slate-500">No orders found for your account.</p>
             ) : (
               <div className="space-y-4">
                 {customerOrders.map((o) => (
@@ -738,7 +746,7 @@ export default function OmniCartPlatform() {
                     </div>
 
                     <div className="text-slate-600 space-y-1">
-                      <p><strong>Shipping Location:</strong> {o.shippingAddress}, {o.city} - {o.pincode}</p>
+                      <p><strong>Campus Location:</strong> {o.shippingAddress}, {o.city} - {o.pincode}</p>
                       <p><strong>Estimate:</strong> {o.estimatedDeliveryDate}</p>
                     </div>
 
@@ -753,7 +761,7 @@ export default function OmniCartPlatform() {
                           {o.status === "Delivered" ? (
                             <div className="bg-slate-50 p-3 rounded-xl border space-y-2 mt-2">
                               <span className="font-bold text-emerald-700 block text-2xs">
-                                🌟 Verified Purchase Review Unlocked for "{it.title}"
+                                🌟 Review Unlocked for "{it.title}"
                               </span>
                               <div className="flex items-center gap-2">
                                 <label className="text-2xs font-bold">Rating:</label>
@@ -832,11 +840,11 @@ export default function OmniCartPlatform() {
             {sellerSubTab === "dashboard" && (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-2xl">
                 <div className="bg-white p-6 rounded-2xl border shadow-sm">
-                  <span className="text-xs font-bold text-slate-400">REVENUE</span>
+                  <span className="text-xs font-bold text-slate-400">TOTAL REVENUE</span>
                   <h3 className="text-2xl font-black text-slate-900 mt-1">₹{sellerRevenue}</h3>
                 </div>
                 <div className="bg-white p-6 rounded-2xl border shadow-sm">
-                  <span className="text-xs font-bold text-slate-400">ACTIVE PRODUCTS</span>
+                  <span className="text-xs font-bold text-slate-400">ACTIVE LISTINGS</span>
                   <h3 className="text-2xl font-black text-slate-900 mt-1">{sellerProducts.length}</h3>
                 </div>
               </div>
@@ -844,7 +852,7 @@ export default function OmniCartPlatform() {
 
             {sellerSubTab === "add-product" && (
               <div className="bg-white p-6 rounded-2xl border max-w-xl mx-auto space-y-4 text-xs font-medium shadow-sm">
-                <h2 className="text-lg font-bold">Upload Product to Cloud</h2>
+                <h2 className="text-lg font-bold">List Product for Campus</h2>
                 <form onSubmit={handleAddProduct} className="space-y-3">
                   <div>
                     <label className="block text-slate-700 mb-1">Category</label>
@@ -863,7 +871,7 @@ export default function OmniCartPlatform() {
                     <label className="block text-slate-700 mb-1">Product Title</label>
                     <input
                       type="text"
-                      placeholder="e.g. Paracetamol 500mg"
+                      placeholder="e.g. Engineering Mathematics Textbook / Table Lamp"
                       value={newTitle}
                       onChange={(e) => setNewTitle(e.target.value)}
                       required
@@ -876,7 +884,7 @@ export default function OmniCartPlatform() {
                       <label className="block text-slate-700 mb-1">Price (₹)</label>
                       <input
                         type="number"
-                        placeholder="999"
+                        placeholder="250"
                         value={newPrice}
                         onChange={(e) => setNewPrice(e.target.value)}
                         required
@@ -887,7 +895,7 @@ export default function OmniCartPlatform() {
                       <label className="block text-slate-700 mb-1">Stock</label>
                       <input
                         type="number"
-                        placeholder="25"
+                        placeholder="1"
                         value={newStock}
                         onChange={(e) => setNewStock(e.target.value)}
                         required
@@ -905,7 +913,7 @@ export default function OmniCartPlatform() {
                     <label className="block text-slate-700 mb-1">Description</label>
                     <textarea
                       rows={3}
-                      placeholder="Enter details..."
+                      placeholder="Enter condition, usage details, hostel pickup location..."
                       value={newDescription}
                       onChange={(e) => setNewDescription(e.target.value)}
                       className="w-full p-2.5 rounded-xl border"
@@ -913,7 +921,7 @@ export default function OmniCartPlatform() {
                   </div>
 
                   <button type="submit" className="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl cursor-pointer">
-                    Publish Product to Cloud
+                    Publish Product to Campus
                   </button>
                 </form>
               </div>
@@ -921,7 +929,7 @@ export default function OmniCartPlatform() {
 
             {sellerSubTab === "inventory" && (
               <div className="bg-white rounded-2xl border p-5 text-xs space-y-3 shadow-sm">
-                <h2 className="font-bold text-sm">Your Cloud Catalog</h2>
+                <h2 className="font-bold text-sm">Your Active Listings</h2>
                 {sellerProducts.length === 0 ? (
                   <p className="text-slate-500">No items listed yet.</p>
                 ) : (
@@ -940,14 +948,14 @@ export default function OmniCartPlatform() {
 
             {sellerSubTab === "orders" && (
               <div className="bg-white rounded-2xl border p-5 text-xs space-y-4 shadow-sm">
-                <h2 className="font-bold text-sm">Fulfill Customer Orders</h2>
+                <h2 className="font-bold text-sm">Fulfill Student Orders</h2>
                 {sellerOrders.length === 0 ? (
-                  <p className="text-slate-500">No customer orders received yet.</p>
+                  <p className="text-slate-500">No orders received yet.</p>
                 ) : (
                   sellerOrders.map((o) => (
                     <div key={o.id} className="border p-4 rounded-xl space-y-2">
                       <div className="flex justify-between font-bold">
-                        <span>Order #{o.orderCode} - Customer: {o.customerName}</span>
+                        <span>Order #{o.orderCode} - Buyer: {o.customerName}</span>
                         <span className="text-indigo-600">₹{o.totalAmount}</span>
                       </div>
                       <p className="text-slate-600">📍 <strong>Deliver To:</strong> {o.shippingAddress}, {o.city} ({o.pincode})</p>
